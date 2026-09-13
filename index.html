@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>webdatatools — web data tools for AI agents</title>
+<meta name="description" content="12 pay-per-result web data tools on Apify: search and page reading for LLMs, contact and company data, domain and e-mail security, app store and developer data. Callable from any AI agent over MCP.">
+<link rel="canonical" href="https://paulet4a-commits.github.io/webdatatools/">
+<style>
+:root{--bg:#fff;--fg:#0f172a;--mut:#64748b;--line:#e2e8f0;--accent:#2563eb}
+@media(prefers-color-scheme:dark){:root{--bg:#0b1120;--fg:#e2e8f0;--mut:#94a3b8;--line:#1e293b;--accent:#60a5fa}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:48px 20px 80px}
+h1{font-size:2rem;margin:0 0 .4rem}h2{font-size:1.1rem;margin:2.5rem 0 1rem;color:var(--mut);font-weight:600;letter-spacing:.02em}
+.lede{color:var(--mut);max-width:60ch;margin:0 0 1.5rem}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.card{display:flex;gap:12px;padding:14px;border:1px solid var(--line);border-radius:12px;text-decoration:none;color:inherit;transition:border-color .15s}
+.card:hover{border-color:var(--accent)}
+.card img,.ph{border-radius:9px;flex:0 0 44px;height:44px;background:var(--line)}
+.card p{margin:.2rem 0 .35rem;color:var(--mut);font-size:.9rem}
+.price{font-size:.8rem;color:var(--accent)}
+pre{background:var(--line);padding:14px;border-radius:10px;overflow-x:auto;font-size:.85rem}
+footer{margin-top:3rem;color:var(--mut);font-size:.9rem;border-top:1px solid var(--line);padding-top:1.2rem}
+a{color:var(--accent)}
+</style></head><body><div class="wrap">
+<h1>webdatatools</h1>
+<p class="lede">12 small, dependable web-data tools on the Apify Store. Each one takes a list and returns
+one clean row per item — pay per result, no browser, no proxy juggling. They are built to be called by AI agents
+as much as by people.</p>
+<p class="lede"><a href="https://apify.com/webdatatools">Apify Store profile</a> ·
+<a href="https://github.com/paulet4a-commits/webdatatools-mcp-server">MCP server on GitHub</a></p>
+
+<h2>Use them from an AI agent</h2>
+<p class="lede">Add this to your Claude Desktop, Cursor or Cline config and ten of the tools appear in the agent's
+tool list. Calls run on your own Apify token, so usage is billed to you at the prices below.</p>
+<pre>{
+  "mcpServers": {
+    "webdatatools": {
+      "command": "npx",
+      "args": ["-y", "github:paulet4a-commits/webdatatools-mcp-server"],
+      "env": { "APIFY_TOKEN": "your-apify-token" }
+    }
+  }
+}</pre>
+<section><h2>Website &amp; domain intelligence</h2><div class="grid"><a class="card" href="https://apify.com/webdatatools/contact-extractor">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-SN88YAtrbnLiHjsJf-MJlWPlEH29-contact-extractor.png" alt="" width="44" height="44">
+      <div><strong>Website Contact &amp; Social Extractor</strong><p>e-mails, phones and social profiles per domain</p><span class="price">$10 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/tech-stack-detector">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-K6jDqlY7EiQ2sbqLx-B97lz2udNQ-tech-stack-detector.png" alt="" width="44" height="44">
+      <div><strong>Website Tech Stack Detector</strong><p>CMS, e-commerce, analytics, pixels and payments per domain</p><span class="price">$5 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/dns-email-security-checker">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-bUdlJZmG1HcFViqgu-X3zJ15NNZh-dns-email-security-checker.png" alt="" width="44" height="44">
+      <div><strong>Domain DNS &amp; Email Security Checker</strong><p>SPF, DKIM, DMARC, MX provider, registrar and domain age</p><span class="price">$5 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/subdomain-finder">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-UDB3k0SyLCgRgtAqY-jeRczjtqdn-subdomain-finder.png" alt="" width="44" height="44">
+      <div><strong>Subdomain Finder (Certificate Transparency)</strong><p>every subdomain seen in CT logs, with a live DNS check</p><span class="price">$0.50 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/core-web-vitals-audit">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-FM0Kfh5kY4KVsuHVe-Ebe6jE0AZz-core-web-vitals-audit.png" alt="" width="44" height="44">
+      <div><strong>Bulk Core Web Vitals &amp; PageSpeed Audit</strong><p>Lighthouse scores, LCP, CLS, INP and top fixes per URL</p><span class="price">$5 / 1,000 result</span></div>
+    </a></div></section><section><h2>Content for AI, LLMs and RAG</h2><div class="grid"><a class="card" href="https://apify.com/webdatatools/ai-web-search">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-T9ennoxjzhhpNMTms-fWbXHfKfYt-ai-web-search.png" alt="" width="44" height="44">
+      <div><strong>AI Web Search &amp; Read: Google results as clean Markdown</strong><p>a query turned into clean Markdown from the top search results</p><span class="price">$5 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/website-to-markdown">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-XzLicaoE1OdrHNA4E-I3IqcPknuH-website-to-markdown.png" alt="" width="44" height="44">
+      <div><strong>Website to Markdown Crawler for LLM &amp; RAG (fast, no browser)</strong><p>any site as clean Markdown per page, no browser</p><span class="price">$1 / 1,000 result</span></div>
+    </a></div></section><section><h2>Search, video and social</h2><div class="grid"><a class="card" href="https://apify.com/webdatatools/bluesky-scraper">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-5LnUc8cSEObBihsS0-UXmWg0hJMn-bluesky-scraper.png" alt="" width="44" height="44">
+      <div><strong>Bluesky Post, Search &amp; Profile Scraper</strong><p>posts, profiles, followers and threads from the AT Protocol API</p><span class="price">$0.50 / 1,000 post</span></div>
+    </a></div></section><section><h2>Leads, jobs and company data</h2><div class="grid"><a class="card" href="https://apify.com/webdatatools/company-360">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-BbeJDj8MzLbIfg0hM-1zg6AG9CbT-company-360.png" alt="" width="44" height="44">
+      <div><strong>Company 360: full company profile from a domain</strong><p>one row per domain: contacts, tech, security, hiring and company facts</p><span class="price">$50 / 1,000 company</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/hiring-signals">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-IzYAKYeRydOFJMgJQ-ehmKwB2RIR-hiring-signals.png" alt="" width="44" height="44">
+      <div><strong>Hiring Signals Scraper (Greenhouse, Lever, Ashby, Workable)</strong><p>open jobs and hiring velocity from 10 public ATS boards</p><span class="price">$2 / 1,000 result</span></div>
+    </a></div></section><section><h2>Developer, app and research data</h2><div class="grid"><a class="card" href="https://apify.com/webdatatools/package-health-checker">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-TdSenN5Wsa4BXLhxv-WJyZEP1UDx-package-health-checker.png" alt="" width="44" height="44">
+      <div><strong>npm, PyPI &amp; Crates.io Package Health Checker</strong><p>releases, downloads, deprecation and a health score</p><span class="price">$2 / 1,000 result</span></div>
+    </a><a class="card" href="https://apify.com/webdatatools/google-play-scraper">
+      <img src="https://apify-image-uploads-prod.s3.us-east-1.amazonaws.com/1o1Aj5GdADHQnlL35-actor-D9STraSxQsJ1bAnKJ-zNiLkS1UoN-google-play-scraper.png" alt="" width="44" height="44">
+      <div><strong>Google Play Scraper</strong><p>apps, ratings, installs, developer contact and reviews</p><span class="price">$2 / 1,000 app</span></div>
+    </a></div></section>
+<footer>Built by <a href="https://apify.com/webdatatools">Murat Uzun</a>. Prices shown are the free-plan tier;
+paid Apify plans get volume discounts automatically.</footer>
+</div></body></html>
