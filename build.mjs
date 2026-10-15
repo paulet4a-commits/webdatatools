@@ -2,44 +2,27 @@
 // No dependencies, no build step: writes index.html ready for GitHub Pages.
 import fs from 'node:fs';
 import path from 'node:path';
+import { fetchPublicActors, groupActors, priceLabel } from './catalog.mjs';
 
 const root = path.join(import.meta.dirname, '..', 'actors');
-const TOKEN = fs.readFileSync(path.join(root, '.secrets', 'apify-token.txt'), 'utf8').trim();
-const manifest = JSON.parse(fs.readFileSync(path.join(root, '_ops', 'suite-manifest.json'), 'utf8'));
-
-const api = async (p) => (await fetch(`https://api.apify.com/v2/${p}${p.includes('?') ? '&' : '?'}token=${TOKEN}`)).json();
-const acts = (await api('acts?my=1&limit=100')).data?.items ?? [];
-const detail = new Map();
-for (const a of acts) {
-    if (a.name === 'feasibility-probe') continue;
-    const d = (await api(`acts/${a.id}`)).data ?? {};
-    detail.set(a.name, d);
-}
+const manifestPath = path.join(root, '_ops', 'suite-manifest.json');
+const manifest = fs.existsSync(manifestPath) ? JSON.parse(fs.readFileSync(manifestPath, 'utf8')) : { groups: [] };
+const acts = await fetchPublicActors();
+const groups = groupActors(manifest, acts);
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const price = (d) => {
-    const p = (d.pricingInfos ?? []).at(-1);
-    const ev = p?.pricingPerEvent?.actorChargeEvents ?? {};
-    const primary = Object.values(ev).find((e) => e.isPrimaryEvent) ?? Object.values(ev).find((e) => e.eventTieredPricingUsd);
-    const usd = primary?.eventTieredPricingUsd?.FREE?.tieredEventPriceUsd ?? primary?.eventPriceUsd;
-    if (!usd) return '';
-    const per1000 = (usd * 1000).toFixed(usd * 1000 < 1 ? 2 : 2).replace(/\.00$/, '');
-    return `$${per1000} / 1,000 ${primary?.eventTitle ?? 'results'}`;
-};
 
 let cards = '';
 let published = 0;
-for (const group of manifest.groups) {
-    const live = group.actors.filter((a) => detail.get(a.slug)?.isPublic);
-    if (!live.length) continue;
+for (const group of groups) {
     cards += `<section><h2>${esc(group.name)}</h2><div class="grid">`;
-    for (const a of live) {
-        const d = detail.get(a.slug);
+    for (const a of group.actors) {
+        const d = a.actor;
         published += 1;
         const icon = d.pictureUrl ? `<img src="${esc(d.pictureUrl)}" alt="" width="44" height="44">` : '<div class="ph"></div>';
         cards += `<a class="card" href="https://apify.com/webdatatools/${a.slug}">
       ${icon}
-      <div><strong>${esc(d.title ?? a.title)}</strong><p>${esc(a.blurb)}</p><span class="price">${esc(price(d))}</span></div>
+      <div><strong>${esc(d.title ?? a.title)}</strong><p>${esc(a.blurb)}</p><span class="price">${esc(priceLabel(d))}</span></div>
     </a>`;
     }
     cards += '</div></section>';
@@ -70,11 +53,17 @@ a{color:var(--accent)}
 </style></head><body><div class="wrap">
 <h1>webdatatools</h1>
 <p class="lede">${published} small, dependable web-data tools on the Apify Store. Each one takes a list and returns
-one clean row per item — pay per result, no browser, no proxy juggling. They are built to be called by AI agents
+structured output for its specific task. Pricing and browser requirements depend on the Actor. They are built to be called by AI agents
 as much as by people.</p>
 <p class="lede"><a href="https://apify.com/webdatatools">Apify Store profile</a> ·
 <a href="https://github.com/paulet4a-commits/webdatatools-mcp-server">MCP server on GitHub</a></p>
 
+<h2>Start with a workflow</h2>
+<ul>
+<li><a href="https://apify.com/webdatatools/css-selector-extractor">Extract named fields from static pages</a> — configure the selectors once and reuse the same structured output.</li>
+<li><a href="https://apify.com/webdatatools/youtube-channel-scraper">Build a YouTube channel video inventory</a> — collect the channel's videos, shorts and live listings.</li>
+<li><a href="https://apify.com/webdatatools/website-to-markdown">Prepare website content for a knowledge base</a> — clean Markdown with optional chunking and change detection.</li>
+</ul>
 <h2>Use them from an AI agent</h2>
 <p class="lede">Add this to your Claude Desktop, Cursor or Cline config and ten of the tools appear in the agent's
 tool list. Calls run on your own Apify token, so usage is billed to you at the prices below.</p>
@@ -92,5 +81,9 @@ ${cards}
 paid Apify plans get volume discounts automatically.</footer>
 </div></body></html>`;
 
-fs.writeFileSync(path.join(import.meta.dirname, 'index.html'), html);
+if (published !== acts.length) throw new Error('Rendered catalog count does not match the public Store');
+const output = path.join(import.meta.dirname, 'index.html');
+fs.writeFileSync(output + '.tmp', html);
+fs.renameSync(output + '.tmp', output);
+console.log(`Public Store ${acts.length}; rendered ${published} unique Actors`);
 console.log(`wrote index.html with ${published} published actors`);
