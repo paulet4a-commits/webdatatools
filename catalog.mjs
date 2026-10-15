@@ -48,8 +48,10 @@ export function groupActors(manifest, actors) {
 
 export function priceLabel(actor) {
     const events = Object.values(actor.currentPricingInfo?.pricingPerEvent?.actorChargeEvents ?? {});
-    const primary = events.find(e => e.isPrimaryEvent) ?? events.find(e => !e.isOneTimeEvent);
-    const usd = primary?.eventTieredPricingUsd?.FREE?.tieredEventPriceUsd ?? primary?.eventPriceUsd;
-    if (typeof usd !== 'number' || !Number.isFinite(usd) || usd <= 0) return '';
-    return `$${(usd * 1000).toFixed(2).replace(/\.00$/, '')} / 1,000 ${primary.eventTitle ?? 'results'}`;
+    const recurring = events.filter(e => !e.isOneTimeEvent).sort((a, b) => Number(!!b.isPrimaryEvent) - Number(!!a.isPrimaryEvent));
+    return recurring.map(event => {
+        const usd = event.eventTieredPricingUsd?.FREE?.tieredEventPriceUsd ?? event.eventPriceUsd;
+        if (typeof usd !== 'number' || !Number.isFinite(usd) || usd < 0) return '';
+        return `$${(usd * 1000).toFixed(2).replace(/\.00$/, '')} / 1,000 ${event.eventTitle ?? 'results'}`;
+    }).filter(Boolean).join(' + ');
 }

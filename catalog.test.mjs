@@ -36,3 +36,12 @@ test('catalog uses the current Store price and never the future or start-event p
     assert.equal(priceLabel(a), '$2 / 1,000 pages');
     assert.equal(priceLabel({}), '');
 });
+
+test('additional conditional charge events are not hidden behind the primary rate', () => {
+    const a = { currentPricingInfo: { pricingPerEvent: { actorChargeEvents: {
+        start: { isOneTimeEvent: true, eventPriceUsd: 0.00005 },
+        email: { eventTitle: 'E-mail found', eventPriceUsd: 0.003 },
+        place: { isPrimaryEvent: true, eventTitle: 'Place', eventTieredPricingUsd: { FREE: { tieredEventPriceUsd: 0.002 } } },
+    } } } };
+    assert.equal(priceLabel(a), '$2 / 1,000 Place + $3 / 1,000 E-mail found');
+});
